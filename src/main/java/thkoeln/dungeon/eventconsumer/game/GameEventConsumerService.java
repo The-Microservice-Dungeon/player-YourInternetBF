@@ -1,6 +1,7 @@
 package thkoeln.dungeon.eventconsumer.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -26,7 +27,6 @@ public class GameEventConsumerService {
 
     /**
      * "Status changed" event published by GameService, esp. after a game has been created, started, or finished
-     * --- this extra line for testing purposes ---
      */
     @KafkaListener( topics = "status" )  // that is what the documentation says
     public void consumeGameStatusEvent( @Payload GameStatusEventPayload gameStatusEventPayload, MessageHeaders headers ) {
