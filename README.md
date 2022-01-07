@@ -8,6 +8,9 @@ This repo contains a generic, Java-based Dungeon player template. It can be used
 - Some REST call implementations from player to Game service (caveat: unit-tested, but not yet integration-tested)
 - Some basic event listeners
 - Player registration, and some logic to listen to a game creation and start
+- An improvised logfile read endpoint: call `GET <server>:<yourport>/actuator/logs` and get a printout from the
+logfile (in local dev env, you of course see this on your console, but in a deployed environment, this comes
+handy)
 
 **What it doesn't have:**
 
@@ -64,14 +67,13 @@ The domain model is as such:
 ![Domain Model](model/Player-Domain-Model.png)
 
 The packages are designed around the aggregates, according the basic DDD approach to software architecture. 
-This leads to the following internal package dependency structure (without event and REST adapters):
+This leads to the following internal package dependency structure. 
+* Connection to the Apache Kafka is abstracted through the `eventconsumer` package
+* Connection to Game service (via REST) is handled in the `restadapter` package
 
-![Internal Package Dependencies](model/Internal-Package-Dependencies.png)
 
-Connection to the Apache Kafka is abstracted through the `eventconnector` package, connection to Game service (via REST)
-through the `restadapter` package. (For internal package dependency see above - not depicted here for more clarity.)
+![Package Dependencies](model/Package-Dependencies.png)
 
-![Architecture Overview](model/Adapter-Dependencies.png)
 
 
 ## What do I need to do to create my own player based on this?
