@@ -21,8 +21,10 @@ import thkoeln.dungeon.restadapter.GameDto;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -32,7 +34,7 @@ import static thkoeln.dungeon.game.domain.GameStatus.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest( classes = DungeonPlayerConfiguration.class )
-public class GameInitializationTest {
+public class GameSynchronizationTest {
     private static final UUID GAME_ID_0 = UUID.randomUUID();
     private GameDto gameDto0 = new GameDto(GAME_ID_0, CREATED, 0 );
 
@@ -98,9 +100,9 @@ public class GameInitializationTest {
         mockServer.verify();
         List<Game> games = gameRepository.findAll();
         assertEquals( 3, games.size() );
-        games = gameApplicationService.retrieveActiveGames();
-        assertEquals( 1, games.size() );
-        assertEquals( gameDto1.getGameId(), games.get( 0 ).getGameId() );
+        Optional<Game> optional = gameApplicationService.retrieveRunningGame();
+        assertTrue( optional.isPresent() );
+        assertEquals( gameDto1.getGameId(), optional.get().getGameId() );
     }
 
 
@@ -119,9 +121,9 @@ public class GameInitializationTest {
         mockServer.verify();
         List<Game> games = gameRepository.findAll();
         assertEquals( 4, games.size() );
-        games = gameApplicationService.retrieveActiveGames();
-        assertEquals( 1, games.size() );
-        assertEquals(gameDto0.getGameId(), games.get( 0 ).getGameId() );
+        Optional<Game> optional = gameApplicationService.retrieveRunningGame();
+        assertTrue( optional.isPresent() );
+        assertEquals(gameDto0.getGameId(), optional.get().getGameId() );
         Game game = gameRepository.findByGameId(GAME_ID_1).get( 0 );
         assertEquals( GAME_FINISHED, game.getGameStatus() );
         game = gameRepository.findByGameId(GAME_ID_2).get( 0 );
