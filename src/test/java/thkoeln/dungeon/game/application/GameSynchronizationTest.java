@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import thkoeln.dungeon.DungeonPlayerConfiguration;
 import thkoeln.dungeon.game.domain.Game;
 import thkoeln.dungeon.game.domain.GameRepository;
+import thkoeln.dungeon.player.domain.PlayerRepository;
 import thkoeln.dungeon.restadapter.GameDto;
 
 import java.net.URI;
@@ -65,11 +66,15 @@ public class GameSynchronizationTest {
     private GameRepository gameRepository;
 
     @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
     private GameApplicationService gameApplicationService;
 
 
     @Before
     public void setUp() throws Exception {
+        gameRepository.deleteAll();
         gameRepository.deleteAll();
         gamesEndpointURI = new URI( gameServiceURIString + "/games" );
 

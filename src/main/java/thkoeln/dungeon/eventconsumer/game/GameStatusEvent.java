@@ -19,12 +19,16 @@ public class GameStatusEvent extends AbstractEvent {
     private GameStatus gameStatus;
     private UUID gameId;
 
-    private static final String TYPE_KEY = "type";
-    private static final String GAME_ID_KEY = "gameId";
+    public static final String TYPE_KEY = "type";
+    public static final String GAME_ID_KEY = "gameId";
 
     public GameStatusEvent( MessageHeaders messageHeaders, GameStatusEventPayload gameStatusEventPayload ) {
         super( messageHeaders );
         setGameStatus( gameStatusEventPayload.gameStatus() );
         setGameId( gameStatusEventPayload.gameId() );
+    }
+
+    public boolean isValid() {
+        return ( gameId != null && gameStatus != null );
     }
 }

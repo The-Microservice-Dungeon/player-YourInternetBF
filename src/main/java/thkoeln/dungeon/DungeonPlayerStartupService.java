@@ -31,6 +31,6 @@ public class DungeonPlayerStartupService implements ApplicationListener<ContextR
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         playerApplicationService.createPlayers();
-        playerApplicationService.obtainBearerTokensForPlayers();
+        playerApplicationService.obtainBearerTokensForMultiplePlayers();
     }
 }

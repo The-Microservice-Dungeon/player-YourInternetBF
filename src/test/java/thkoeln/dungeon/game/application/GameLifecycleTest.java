@@ -6,35 +6,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.ExpectedCount;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
 import thkoeln.dungeon.DungeonPlayerConfiguration;
 import thkoeln.dungeon.game.domain.Game;
 import thkoeln.dungeon.game.domain.GameRepository;
-import thkoeln.dungeon.restadapter.GameDto;
+import thkoeln.dungeon.player.domain.PlayerRepository;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static thkoeln.dungeon.game.domain.GameStatus.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest( classes = DungeonPlayerConfiguration.class )
-public class GameLifecycleEventTest {
+public class GameLifecycleTest {
     private static final UUID GAME_ID_0 = UUID.randomUUID();
     private static final UUID GAME_ID_1 = UUID.randomUUID();
     private static final UUID GAME_ID_2 = UUID.randomUUID();
@@ -46,13 +34,15 @@ public class GameLifecycleEventTest {
 
     @Autowired
     private GameRepository gameRepository;
-
+    @Autowired
+    private PlayerRepository playerRepository;
     @Autowired
     private GameApplicationService gameApplicationService;
 
 
     @Before
     public void setUp() throws Exception {
+        playerRepository.deleteAll();
         gameRepository.deleteAll();
         game0 = Game.newlyCreatedGame( GAME_ID_0 );
         game1 = Game.newlyCreatedGame( GAME_ID_1 );
@@ -64,13 +54,15 @@ public class GameLifecycleEventTest {
     public void testGameExternallyCreated_OnEmptyDatabase() {
         // given
         // when
-        gameApplicationService.gameStatusExternallyChanged( GAME_ID_0, CREATED );
+        Game game = gameApplicationService.gameExternallyCreated( GAME_ID_0 );
 
         // then
         assertTrue( gameApplicationService.retrieveRunningGame().isEmpty() );
         assertEquals( 1, gameRepository.findAllByGameStatusEquals( CREATED ).size() );
         assertEquals( 1, gameRepository.findAll().size() );
         assertEquals( GAME_ID_0, gameRepository.findAllByGameStatusEquals( CREATED ).get( 0 ).getGameId() );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals( CREATED ).get( 0 ) );
+        assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
 
 
@@ -78,12 +70,15 @@ public class GameLifecycleEventTest {
     public void testGameExternallyStarted_OnEmptyDatabase() {
         // given
         // when
-        gameApplicationService.gameStatusExternallyChanged( GAME_ID_0, GAME_RUNNING );
+        Game game = gameApplicationService.gameExternallyStarted( GAME_ID_0 );
 
         // then
         assertEquals( GAME_ID_0, gameApplicationService.retrieveRunningGame().get().getGameId() );
         assertEquals( GAME_RUNNING, gameApplicationService.retrieveRunningGame().get().getGameStatus() );
         assertEquals( 1, gameRepository.findAll().size() );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).get( 0 ) );
+        assertEquals( game, gameApplicationService.retrieveRunningGame().get() );
+        assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
 
 
@@ -92,12 +87,14 @@ public class GameLifecycleEventTest {
     public void testGameExternallyEnded_OnEmptyDatabase() {
         // given
         // when
-        gameApplicationService.gameStatusExternallyChanged( GAME_ID_0, GAME_FINISHED );
+        Game game = gameApplicationService.gameExternallyFinished( GAME_ID_0 );
 
         // then
         assertTrue( gameApplicationService.retrieveRunningGame().isEmpty() );
         assertEquals( 1, gameRepository.findAll().size() );
         assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).get( 0 ) );
+        assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
 
 
@@ -110,12 +107,14 @@ public class GameLifecycleEventTest {
         gameRepository.save( game2 );
 
         // when
-        gameApplicationService.gameStatusExternallyChanged( GAME_ID_0, CREATED );
+        Game game = gameApplicationService.gameExternallyCreated( GAME_ID_0 );
 
         // then
         assertEquals( game1, gameApplicationService.retrieveRunningGame().get() );
         assertEquals( 1, gameRepository.findAllByGameStatusEquals( CREATED ).size() );
         assertEquals( 3, gameRepository.findAll().size() );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals( CREATED ).get( 0 ) );
+        assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
 
 
@@ -128,7 +127,7 @@ public class GameLifecycleEventTest {
         gameRepository.save( game2 );
 
         // when
-        gameApplicationService.gameStatusExternallyChanged( GAME_ID_0, GAME_RUNNING );
+        Game game = gameApplicationService.gameExternallyStarted( GAME_ID_0 );
 
         // then
         assertEquals( GAME_ID_0, gameApplicationService.retrieveRunningGame().get().getGameId() );
@@ -136,6 +135,9 @@ public class GameLifecycleEventTest {
         assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).size() );
         assertEquals( 2, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
         assertEquals( 3, gameRepository.findAll().size() );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).get( 0 ) );
+        assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
+        assertEquals( game, gameApplicationService.retrieveRunningGame().get() );
     }
 
 
@@ -149,13 +151,14 @@ public class GameLifecycleEventTest {
         gameRepository.save( game2 );
 
         // when
-        gameApplicationService.gameStatusExternallyChanged( GAME_ID_0, GAME_FINISHED );
+        Game game = gameApplicationService.gameExternallyFinished( GAME_ID_0 );
 
         // then
         assertEquals( game1, gameApplicationService.retrieveRunningGame().get() );
         assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).size() );
         assertEquals( 2, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
         assertEquals( 3, gameRepository.findAll().size() );
+        assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
 
 
@@ -170,12 +173,15 @@ public class GameLifecycleEventTest {
         gameRepository.save( game2 );
 
         // when
-        gameApplicationService.gameStatusExternallyChanged( GAME_ID_2, GAME_RUNNING );
+        Game game = gameApplicationService.gameExternallyStarted( GAME_ID_2 );
 
         // then
         assertEquals( GAME_ID_2, gameApplicationService.retrieveRunningGame().get().getGameId() );
         assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).size() );
         assertEquals( 2, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
         assertEquals( 3, gameRepository.findAll().size() );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).get( 0 ) );
+        assertEquals( game, gameApplicationService.findByGameId( GAME_ID_2 ).get() );
+        assertEquals( game, gameApplicationService.retrieveRunningGame().get() );
     }
 }
