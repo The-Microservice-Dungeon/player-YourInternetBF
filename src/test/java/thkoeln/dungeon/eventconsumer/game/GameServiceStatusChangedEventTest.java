@@ -1,6 +1,7 @@
 package thkoeln.dungeon.eventconsumer.game;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,8 +46,10 @@ public class GameServiceStatusChangedEventTest extends AbstractRESTEndpointMocki
     private UUID bearerToken = UUID.randomUUID();
     private UUID gameId = UUID.randomUUID();
     private UUID transactionId = UUID.randomUUID();
-    private GameStatusEventPayload createdEventPayload;
+    private GameStatusEventPayloadDto createdEventPayload;
+    private String eventPayloadString;
     private MessageHeaders messageHeaders;
+    private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @Before
     public void setUp() throws Exception {
@@ -62,7 +65,7 @@ public class GameServiceStatusChangedEventTest extends AbstractRESTEndpointMocki
             assertTrue( player.isReadyToPlay() );
             playerRepository.save( player );
         }
-        createdEventPayload = new GameStatusEventPayload( gameId, CREATED );
+        createdEventPayload = new GameStatusEventPayloadDto( gameId, CREATED );
         HashMap<String, Object> map = new HashMap<>();
         map.put( ID, UUID.randomUUID() );
         map.put( TIMESTAMP, 999999L );
@@ -75,9 +78,10 @@ public class GameServiceStatusChangedEventTest extends AbstractRESTEndpointMocki
         // given
         resetMockServer();
         for ( Player player: players ) mockRegistrationEndpointFor( player, gameId );
+        eventPayloadString = objectMapper.writeValueAsString( createdEventPayload );
 
         // when
-        gameEventConsumerService.consumeGameStatusEvent( createdEventPayload, messageHeaders );
+        gameEventConsumerService.consumeGameStatusEvent( eventPayloadString, messageHeaders );
 
         // then
         assertEquals( 1, gameRepository.findAll().size() );

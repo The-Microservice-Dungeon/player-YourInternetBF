@@ -41,11 +41,11 @@ public class GameSynchronizationTest {
 
     private static final UUID GAME_ID_1 = UUID.randomUUID();
     private static final Integer GAME_ROW_COUNT_1 = 42;
-    private GameDto gameDto1 = new GameDto(GAME_ID_1, GAME_RUNNING, GAME_ROW_COUNT_1);
+    private GameDto gameDto1 = new GameDto(GAME_ID_1, RUNNING, GAME_ROW_COUNT_1);
 
     private static final UUID GAME_ID_2 = UUID.randomUUID();
     private static final Integer GAME_ROW_COUNT_2 = 200;
-    private GameDto gameDto2 = new GameDto(GAME_ID_2, GAME_FINISHED, GAME_ROW_COUNT_2);
+    private GameDto gameDto2 = new GameDto(GAME_ID_2, FINISHED, GAME_ROW_COUNT_2);
 
     private static final UUID GAME_ID_3 = UUID.randomUUID();
     private static final Integer GAME_ROW_COUNT_3 = 0;
@@ -130,7 +130,7 @@ public class GameSynchronizationTest {
         assertTrue( optional.isPresent() );
         assertEquals(gameDto0.getGameId(), optional.get().getGameId() );
         Game game = gameRepository.findByGameId(GAME_ID_1).get( 0 );
-        assertEquals( GAME_FINISHED, game.getGameStatus() );
+        assertEquals(FINISHED, game.getGameStatus() );
         game = gameRepository.findByGameId(GAME_ID_2).get( 0 );
         assertEquals( ORPHANED, game.getGameStatus() );
         game = gameRepository.findByGameId(GAME_ID_3).get( 0 );
@@ -148,8 +148,8 @@ public class GameSynchronizationTest {
     }
 
     private void mockCallToGamesEndpoint_2() throws Exception {
-        allRemoteGames[0].setGameStatus( GAME_RUNNING );
-        allRemoteGames[1].setGameStatus( GAME_FINISHED );
+        allRemoteGames[0].setGameStatus(RUNNING);
+        allRemoteGames[1].setGameStatus(FINISHED);
         allRemoteGames[2] = gameDto3;
 
         mockServer = MockRestServiceServer.createServer(restTemplate);

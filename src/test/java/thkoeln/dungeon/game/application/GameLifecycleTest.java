@@ -74,9 +74,9 @@ public class GameLifecycleTest {
 
         // then
         assertEquals( GAME_ID_0, gameApplicationService.retrieveRunningGame().get().getGameId() );
-        assertEquals( GAME_RUNNING, gameApplicationService.retrieveRunningGame().get().getGameStatus() );
+        assertEquals(RUNNING, gameApplicationService.retrieveRunningGame().get().getGameStatus() );
         assertEquals( 1, gameRepository.findAll().size() );
-        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).get( 0 ) );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals(RUNNING).get( 0 ) );
         assertEquals( game, gameApplicationService.retrieveRunningGame().get() );
         assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
@@ -92,8 +92,8 @@ public class GameLifecycleTest {
         // then
         assertTrue( gameApplicationService.retrieveRunningGame().isEmpty() );
         assertEquals( 1, gameRepository.findAll().size() );
-        assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
-        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).get( 0 ) );
+        assertEquals( 1, gameRepository.findAllByGameStatusEquals(FINISHED).size() );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals(FINISHED).get( 0 ) );
         assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
 
@@ -101,9 +101,9 @@ public class GameLifecycleTest {
     @Test
     public void testGameExternallyCreated_OnFilledDatabase() {
         // given
-        game1.setGameStatus( GAME_RUNNING );
+        game1.setGameStatus(RUNNING);
         gameRepository.save( game1 );
-        game2.setGameStatus( GAME_FINISHED );
+        game2.setGameStatus(FINISHED);
         gameRepository.save( game2 );
 
         // when
@@ -121,9 +121,9 @@ public class GameLifecycleTest {
     @Test
     public void testGameExternallyStarted_OnFilledDatabase() {
         // given
-        game1.setGameStatus( GAME_RUNNING );
+        game1.setGameStatus(RUNNING);
         gameRepository.save( game1 );
-        game2.setGameStatus( GAME_FINISHED );
+        game2.setGameStatus(FINISHED);
         gameRepository.save( game2 );
 
         // when
@@ -131,11 +131,11 @@ public class GameLifecycleTest {
 
         // then
         assertEquals( GAME_ID_0, gameApplicationService.retrieveRunningGame().get().getGameId() );
-        assertEquals( GAME_RUNNING, gameApplicationService.retrieveRunningGame().get().getGameStatus() );
-        assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).size() );
-        assertEquals( 2, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
+        assertEquals(RUNNING, gameApplicationService.retrieveRunningGame().get().getGameStatus() );
+        assertEquals( 1, gameRepository.findAllByGameStatusEquals(RUNNING).size() );
+        assertEquals( 2, gameRepository.findAllByGameStatusEquals(FINISHED).size() );
         assertEquals( 3, gameRepository.findAll().size() );
-        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).get( 0 ) );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals(RUNNING).get( 0 ) );
         assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
         assertEquals( game, gameApplicationService.retrieveRunningGame().get() );
     }
@@ -145,9 +145,9 @@ public class GameLifecycleTest {
     @Test
     public void testGameExternallyEnded_OnFilledDatabase() {
         // given
-        game1.setGameStatus( GAME_RUNNING );
+        game1.setGameStatus(RUNNING);
         gameRepository.save( game1 );
-        game2.setGameStatus( GAME_FINISHED );
+        game2.setGameStatus(FINISHED);
         gameRepository.save( game2 );
 
         // when
@@ -155,8 +155,8 @@ public class GameLifecycleTest {
 
         // then
         assertEquals( game1, gameApplicationService.retrieveRunningGame().get() );
-        assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).size() );
-        assertEquals( 2, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
+        assertEquals( 1, gameRepository.findAllByGameStatusEquals(RUNNING).size() );
+        assertEquals( 2, gameRepository.findAllByGameStatusEquals(FINISHED).size() );
         assertEquals( 3, gameRepository.findAll().size() );
         assertEquals( game, gameApplicationService.findByGameId( GAME_ID_0 ).get() );
     }
@@ -167,9 +167,9 @@ public class GameLifecycleTest {
         // given
         game0.setGameStatus( CREATED );
         gameRepository.save( game0 );
-        game1.setGameStatus( GAME_RUNNING );
+        game1.setGameStatus(RUNNING);
         gameRepository.save( game1 );
-        game2.setGameStatus( GAME_FINISHED );
+        game2.setGameStatus(FINISHED);
         gameRepository.save( game2 );
 
         // when
@@ -177,10 +177,10 @@ public class GameLifecycleTest {
 
         // then
         assertEquals( GAME_ID_2, gameApplicationService.retrieveRunningGame().get().getGameId() );
-        assertEquals( 1, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).size() );
-        assertEquals( 2, gameRepository.findAllByGameStatusEquals( GAME_FINISHED ).size() );
+        assertEquals( 1, gameRepository.findAllByGameStatusEquals(RUNNING).size() );
+        assertEquals( 2, gameRepository.findAllByGameStatusEquals(FINISHED).size() );
         assertEquals( 3, gameRepository.findAll().size() );
-        assertEquals( game, gameRepository.findAllByGameStatusEquals( GAME_RUNNING ).get( 0 ) );
+        assertEquals( game, gameRepository.findAllByGameStatusEquals(RUNNING).get( 0 ) );
         assertEquals( game, gameApplicationService.findByGameId( GAME_ID_2 ).get() );
         assertEquals( game, gameApplicationService.retrieveRunningGame().get() );
     }

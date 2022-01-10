@@ -50,7 +50,7 @@ public class PlayerBearerTokenTest extends AbstractRESTEndpointMockingTest {
         gameRepository.deleteAll();
         game = new Game();
         game.setGameId( UUID.randomUUID() );
-        game.setGameStatus( GAME_RUNNING );
+        game.setGameStatus(RUNNING);
         game.setCurrentRoundCount( 22 );
         gameRepository.save( game );
     }

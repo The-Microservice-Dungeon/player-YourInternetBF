@@ -9,7 +9,6 @@ import thkoeln.dungeon.game.domain.Game;
 import thkoeln.dungeon.game.domain.GameException;
 import thkoeln.dungeon.game.domain.GameRepository;
 import thkoeln.dungeon.game.domain.GameStatus;
-import thkoeln.dungeon.player.application.PlayerApplicationService;
 import thkoeln.dungeon.restadapter.GameDto;
 import thkoeln.dungeon.restadapter.GameServiceRESTAdapter;
 import thkoeln.dungeon.restadapter.exceptions.RESTConnectionFailureException;
@@ -38,7 +37,7 @@ public class GameApplicationService {
 
 
     public Optional<Game> retrieveRunningGame() {
-        List<Game> foundGames = gameRepository.findAllByGameStatusEquals( GameStatus.GAME_RUNNING );
+        List<Game> foundGames = gameRepository.findAllByGameStatusEquals( GameStatus.RUNNING);
         if ( foundGames.size() > 1 ) throw new GameException( "More than one running game!" );
         if ( foundGames.size() == 1 ) {
             return Optional.of( foundGames.get( 0 ) );
@@ -88,11 +87,11 @@ public class GameApplicationService {
         logger.info( "Processing external event that the game with gameId " + gameId + " has started" );
         List<Game> allGames = gameRepository.findAll();
         for ( Game game: allGames ) {
-            game.setGameStatus( GameStatus.GAME_FINISHED );
+            game.setGameStatus( GameStatus.FINISHED);
             gameRepository.save( game );
         }
         Game game = findAndIfNeededCreateGame( gameId );
-        game.setGameStatus( GameStatus.GAME_RUNNING );
+        game.setGameStatus( GameStatus.RUNNING);
         gameRepository.save( game );
         return game;
     }
@@ -106,7 +105,7 @@ public class GameApplicationService {
     public Game gameExternallyFinished( UUID gameId ) {
         logger.info( "Processing external event that the game with gameId " + gameId + " has ended" );
         Game game = findAndIfNeededCreateGame( gameId );
-        game.setGameStatus( GameStatus.GAME_FINISHED );
+        game.setGameStatus( GameStatus.FINISHED);
         gameRepository.save( game );
         return game;
     }
