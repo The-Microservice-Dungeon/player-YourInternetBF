@@ -6,13 +6,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import thkoeln.dungeon.command.CommandExecutor;
+import thkoeln.dungeon.game.application.GameApplicationService;
 import thkoeln.dungeon.game.domain.Game;
-import thkoeln.dungeon.player.domain.*;
+import thkoeln.dungeon.player.domain.GameParticipationRepository;
+import thkoeln.dungeon.player.domain.Player;
+import thkoeln.dungeon.player.domain.PlayerMode;
+import thkoeln.dungeon.player.domain.PlayerRepository;
 import thkoeln.dungeon.restadapter.GameServiceRESTAdapter;
+import thkoeln.dungeon.restadapter.PlayerRegistryDto;
 import thkoeln.dungeon.restadapter.exceptions.RESTConnectionFailureException;
 import thkoeln.dungeon.restadapter.exceptions.RESTRequestDeniedException;
-import thkoeln.dungeon.restadapter.PlayerRegistryDto;
 import thkoeln.dungeon.restadapter.exceptions.UnexpectedRESTException;
 
 import java.util.List;
@@ -31,10 +34,10 @@ public class PlayerApplicationService {
     private Logger logger = LoggerFactory.getLogger(PlayerApplicationService.class);
     private ModelMapper modelMapper = new ModelMapper();
 
-    private CommandExecutor commandExecutor;
     private PlayerRepository playerRepository;
     private GameParticipationRepository gameParticipationRepository;
     private GameServiceRESTAdapter gameServiceRESTAdapter;
+    private GameApplicationService gameApplicationService;
 
     @Value("${dungeon.singlePlayer.playerName}")
     private String singlePlayerName;
@@ -50,14 +53,14 @@ public class PlayerApplicationService {
 
     @Autowired
     public PlayerApplicationService(
-            CommandExecutor commandExecutor,
             PlayerRepository playerRepository,
             GameParticipationRepository gameParticipationRepository,
+            GameApplicationService gameApplicationService,
             GameServiceRESTAdapter gameServiceRESTAdapter ) {
-        this.commandExecutor = commandExecutor;
         this.playerRepository = playerRepository;
         this.gameParticipationRepository = gameParticipationRepository;
         this.gameServiceRESTAdapter = gameServiceRESTAdapter;
+        this.gameApplicationService = gameApplicationService;
     }
 
     public PlayerMode currentMode() {
@@ -95,9 +98,9 @@ public class PlayerApplicationService {
     /**
      * Obtain the bearer token for all players defined in this service
      */
-    public void obtainBearerTokensForPlayers() {
+    public void obtainBearerTokensForMultiplePlayers() {
         List<Player> players = playerRepository.findAll();
-        for (Player player : players) obtainBearerTokenForOnePlayer( player );
+        for (Player player : players) obtainBearerTokenForPlayer( player );
     }
 
 
@@ -106,7 +109,7 @@ public class PlayerApplicationService {
      * @param player
      * @return true if successful
      */
-    protected void obtainBearerTokenForOnePlayer( Player player ) {
+    public void obtainBearerTokenForPlayer(Player player ) {
         if ( player.getBearerToken() != null ) return;
         try {
             PlayerRegistryDto playerDto = modelMapper.map(player, PlayerRegistryDto.class);
@@ -131,12 +134,16 @@ public class PlayerApplicationService {
     }
 
 
+
+
     /**
-     * Once we received the event that a game has been created, this method can be called to register the players
+     * We have received the event that a game has been created. So make sure that the game state is suitable,
+     * and that our player(s) can join.
      * for the game.
-     * @param game
+     * @param gameId
      */
-    public void registerPlayersForGame( Game game ) {
+    public void joinPlayersInNewlyCreatedGame( UUID gameId ) {
+        Game game = gameApplicationService.gameExternallyCreated( gameId );
         List<Player> players = playerRepository.findAll();
         for (Player player : players) registerOnePlayerForGame( player, game );
     }
@@ -151,7 +158,7 @@ public class PlayerApplicationService {
     public void registerOnePlayerForGame( Player player, Game game ) {
         try {
             if (player.getBearerToken() == null) {
-                obtainBearerTokenForOnePlayer( player );
+                obtainBearerTokenForPlayer( player );
             }
             if (player.getBearerToken() == null) {
                 logger.error("No bearer token for " + player + " also after another attempt - cannot register for game!");
@@ -165,35 +172,11 @@ public class PlayerApplicationService {
             }
         } catch (RESTConnectionFailureException | RESTRequestDeniedException e) {
             // shouldn't happen - cannot do more than logging and retrying later
+            // todo - err msg wrong
             logger.error("Could not be get bearer token for player " + player +
                     " due to connection problems - try again later.");
         }
     }
 
 
-
-
-
-    public void playRound( Integer roundNumber ) {
-        logger.info( "Starting round " + roundNumber );
-        Iterable<Player> players = playerRepository.findAll();
-        for ( Player player : players ) {
-            player.playRound();
-        }
-        UUID transactionId = commandExecutor.executeCommand( null );
-        logger.info( "transactionId " + transactionId );
-        logger.info( "Ending round " + roundNumber );
-    }
-
-
-
-
-    public void receiveCommandAnswer(UUID transactionId, String payload) {
-
-    }
-
-
-    public void learnAboutMoveByEnemyRobot() {
-
-    }
 }

@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import thkoeln.dungeon.player.application.PlayerApplicationService;
 
 import javax.persistence.Id;
@@ -29,16 +31,26 @@ public abstract class AbstractEvent {
     @Transient
     protected Logger logger = LoggerFactory.getLogger(PlayerApplicationService.class);
 
-    private static final String TRANSACTION_ID_KEY = "transactionId";
+    public static final String TRANSACTION_ID_KEY = "transactionId";
 
-    public AbstractEvent( MessageHeaders messageHeaders ) {
-        setEventId( messageHeaders.getId() );
-        setTimestamp( messageHeaders.getTimestamp() ) ;
+    public AbstractEvent( String eventIdStr, String timestampStr, String transactionIdStr ) {
         try {
-            setTransactionId(UUID.fromString(String.valueOf(messageHeaders.get(TRANSACTION_ID_KEY))));
+            setEventId( UUID.fromString( eventIdStr ) );
         }
         catch ( IllegalArgumentException e ) {
-            logger.warn( "Event " + eventId + " at time " + timestamp + " doesn't have a transactionId." );
+            logger.warn( "Event " + eventId + " at time " + timestamp + " has invalid eventId." );
+        }
+        try {
+            setTimestamp( Long.valueOf( timestampStr ) );
+        }
+        catch ( IllegalArgumentException e ) {
+            logger.warn( "Event " + eventId + " at time " + timestamp + " has invalid timestamp." );
+        }
+        try {
+            setTransactionId( UUID.fromString( transactionIdStr ) );
+        }
+        catch ( IllegalArgumentException e ) {
+            logger.warn( "Event " + eventId + " at time " + timestamp + " doesn't have a valid transactionId " + transactionIdStr );
         }
     }
 }
