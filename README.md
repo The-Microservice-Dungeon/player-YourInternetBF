@@ -1,3 +1,7 @@
 #YourInternetBF
 
-Author: Eric Görens, Michel Heimes, Jonas Anetzberger, Hasret Timocin
+Authors:
+- Eric Goerens
+- Michel Heimes
+- Jonas Anetzberger
+- Hasret Timocin
