@@ -60,6 +60,10 @@ public class Robot {
             case GO_HOME:
                 // TODO: implement this
                 break;
+
+            case BUY_ROBOT:
+                // TODO: implement this
+                break;
         }
     }
 }

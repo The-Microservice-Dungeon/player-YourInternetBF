@@ -11,7 +11,7 @@ Authors:
 ### REST API
 - [ ] Der Player kann sich einloggen und kann Robots kaufen.
 - [x] Der Player stellt den Modus von einem Robot ein.
-- [ ] Kaufe einen Roboter in der nächsten Runde.
+- [x] Kaufe einen Roboter in der nächsten Runde.
 - [x] Gebe Zustand eines Roboter aus.
 - [x] Gebe Zustand aller Robots aus.
 
