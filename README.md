@@ -10,10 +10,10 @@ Authors:
 ## Userstories
 ### REST API
 - [ ] Der Player kann sich einloggen und kann Robots kaufen.
-- [ ] Der Player stellt den Modus von einem Robot ein.
+- [x] Der Player stellt den Modus von einem Robot ein.
 - [ ] Kaufe einen Roboter in der nächsten Runde.
-- [ ] Gebe Zustand eines Roboter aus.
-- [ ] Gebe Zustand aller Robots aus.
+- [x] Gebe Zustand eines Roboter aus.
+- [x] Gebe Zustand aller Robots aus.
 
 ### Domain-layer
 - [ ] Der Modus "Go Home".

@@ -26,6 +26,30 @@ public class Robot {
     @Enumerated(EnumType.ORDINAL)
     private ROBOT_MODE mode = ROBOT_MODE.SERENDIPITY;
 
+    @Column()
+    private Integer energyPoints;
+
+    @Column()
+    private Integer level;
+
+    @Column()
+    private Integer hp;
+
+    @Column()
+    private Integer coal;
+
+    @Column()
+    private Integer iron;
+
+    @Column()
+    private Integer gem;
+
+    @Column()
+    private Integer gold;
+
+    @Column()
+    private Integer platin;
+
     // this method is being executed in the RobotService.playRound()
     public void playRound() {
         switch (mode) {
