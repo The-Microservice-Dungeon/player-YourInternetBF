@@ -11,6 +11,7 @@ public class RobotTest {
     private Planet[][] planetArray = new Planet[3][3];
     private Integer[][] numberOfNeighbours = new Integer[][]{{2, 3, 2}, {3, 4, 3}, {2, 3, 2}};
     private Robot robot = new Robot();
+    private Planet planetStartingPosition = planetArray[0][0];
 
 
     @Autowired
@@ -24,8 +25,10 @@ public class RobotTest {
                 planetArray[i][j].setName("p" + String.valueOf(i) + String.valueOf(j));
             }
         }
+        robot.setCurrentPlanet(planetStartingPosition.getId());
     }
-    private Planet planetStartingPosition = planetArray[0][0];
+
+
 
 
 }
