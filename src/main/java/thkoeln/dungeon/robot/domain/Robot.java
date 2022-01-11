@@ -2,11 +2,9 @@ package thkoeln.dungeon.robot.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import thkoeln.dungeon.planet.domain.Planet;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -15,6 +13,14 @@ import java.util.UUID;
 public class Robot {
     @Id
     private final UUID id = UUID.randomUUID();
+
+    @Getter
+    private int test ;
+
+    @ManyToOne
+    Planet planet;
+    private UUID currentPlanet  = planet.getId();
+
 
     // SERENDIPITY is the default mode
     @Enumerated(EnumType.ORDINAL)
