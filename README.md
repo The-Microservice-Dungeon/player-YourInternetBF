@@ -7,6 +7,23 @@ Authors:
 - Hasret Timocin
 
 
+## Userstories
+### REST API
+- [ ] Der Player kann sich einloggen und kann Robots kaufen.
+- [ ] Der Player stellt den Modus von einem Robot ein.
+- [ ] Kaufe einen Roboter in der nächsten Runde.
+- [ ] Gebe Zustand eines Roboter aus.
+- [ ] Gebe Zustand aller Robots aus.
+
+### Domain-layer
+- [ ] Der Modus "Go Home".
+- [ ] Der Modus "Serendipity".
+- [ ] Gebe eine Übersicht aller bekannten Planeten mit den Positionen der eigenen Robots aus.
+- [ ] Gebe den Zustand eines Roboter
+- [ ] Gebe den Zustand aller Roboter
+- [ ] "Kaufe einen Roboter in der nächsten Runde" - Befehl
+
+---
 
 ### Minimalanforderungen an den Player
 #### Playermodis
