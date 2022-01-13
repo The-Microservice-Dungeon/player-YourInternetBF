@@ -102,7 +102,12 @@ public class Planet {
         return allNeighbours.get(randomPlanet);
     }
 
+    public Planet randomLeastKnownNeighbourPlanet  (){
 
+        List<Planet> allNeighbours = this.allNeighbours();
+
+
+    }
 
     @Override
     public boolean equals(Object o) {
