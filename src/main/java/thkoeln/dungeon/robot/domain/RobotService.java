@@ -52,12 +52,17 @@ public class RobotService {
     }
 
     private void goHomeWith(Robot robot) {
+        // this is the end goal of this mode
+        if (robot.getPlanet().isSpaceStation()) return;
+
         List<Planet> planets = this.planetService.getPlanetsWithSpacestation();
         // TODO: implement coordinate system
         // TODO: & then calculate distance between Robot and Spacestation using Pythagoras (a^2 + b^2 = c^2)
         Planet destinationPlanet = planets.get(0);
         Planet departurePlanet = robot.getPlanet();
 
+        // if one of the neighbours of the robot's planet is the destination planet,
+        // then just move on that planet
         if (destinationPlanet.getEastNeighbour().equals(departurePlanet)) {
             robot.move(CompassDirection.east);
             return;
@@ -75,6 +80,9 @@ public class RobotService {
             return;
         }
 
+        // if the destination planet is out of reach then move to a random planet
+        // if we would have more time for this class, we would have implemented another more sophisticated
+        // way of moving to a spacestation
         robot.move(CompassDirection.getRandomDirection());
     }
 

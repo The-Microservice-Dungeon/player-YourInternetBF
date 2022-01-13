@@ -26,5 +26,7 @@ public enum CompassDirection {
 
             i++;
         }
+        // this should never be the case, but to avoid an exception we just return north
+        return CompassDirection.north;
     }
 }
