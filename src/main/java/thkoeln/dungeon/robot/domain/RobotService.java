@@ -4,18 +4,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import thkoeln.dungeon.planet.domain.Planet;
+import thkoeln.dungeon.planet.domain.PlanetService;
 
 import java.util.*;
 
 @Service
 public class RobotService {
     private final RobotRepository robotRepository;
+    private final PlanetService planetService;
 
     @Autowired
     public RobotService(
-            RobotRepository robotRepository
+            RobotRepository robotRepository,
+            PlanetService  planetService
     ) {
         this.robotRepository = robotRepository;
+        this.planetService = planetService;
     }
 
     public Robot changeMode(UUID robotId, ROBOT_MODE mode) {
@@ -32,9 +37,33 @@ public class RobotService {
         Iterable<Robot> robots = this.robotRepository.findAll();
 
         for (Robot robot : robots) {
-            robot.playRound();
+            // in case the robot is in ROBOT_MODE.IDLE,
+            // we ignore that since that is what we expect in that mode
+
+            if (robot.getMode().equals(ROBOT_MODE.SERENDIPITY)) doExplorationWith(robot);
+            if (robot.getMode().equals(ROBOT_MODE.GO_HOME)) goHomeWith(robot);
+            if (robot.getMode().equals(ROBOT_MODE.BUY_ROBOT)) buyNewRobotWith(robot);
         }
     }
+
+    private void doExplorationWith(Robot robot) {
+        // TODO: implement this
+    }
+
+    private void goHomeWith(Robot robot) {
+        List<Planet> planets = this.planetService.getPlanetsWithSpacestation();
+        // TODO: implement coordinate system
+        // TODO: & then calculate distance between Robot and Spacestation using Pythagoras (a^2 + b^2 = c^2)
+        Planet destinationPlanet = planets.get(0);
+        robot.getPlanet()
+    }
+
+    private void buyNewRobotWith(Robot robot) {
+        // TODO: implement this
+    }
+
+
+
 
     public List<RobotStateDTO> getRobotStateOfAllRobots() {
         Iterable<Robot> robots = this.robotRepository.findAll();

@@ -24,7 +24,7 @@ public class Robot {
 
     // SERENDIPITY is the default mode
     @Enumerated(EnumType.ORDINAL)
-    private ROBOT_MODE mode = ROBOT_MODE.SERENDIPITY;
+    private ROBOT_MODE mode = ROBOT_MODE.IDLE;
 
     @Column()
     private Integer energyPoints;
@@ -49,21 +49,4 @@ public class Robot {
 
     @Column()
     private Integer platin;
-
-    // this method is being executed in the RobotService.playRound()
-    public void playRound() {
-        switch (mode) {
-            case SERENDIPITY:
-                // TODO: implement this
-                break;
-
-            case GO_HOME:
-                // TODO: implement this
-                break;
-
-            case BUY_ROBOT:
-                // TODO: implement this
-                break;
-        }
-    }
 }
