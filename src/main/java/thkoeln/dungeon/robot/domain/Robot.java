@@ -54,13 +54,13 @@ public class Robot {
         switch (mode) {
             case SERENDIPITY:
                 // TODO: implement this
-                List<Planet> neighbourPlanets = currentPlanet.allNeighbours();
-                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
-                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
-                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
-                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
-
-                System.out.println(neighbourPlanets.toString());
+                //first step look at neighbouring planets
+                //go to neighbouring Planet with lowest numberOfVisits
+                System.out.println("_____________________________________________");
+                System.out.println("_____________________________________________");
+                System.out.println("_____________________________________________");
+                System.out.println("_____________________________________________");
+                System.out.println(currentPlanet.getEastNeighbour());
                 break;
 
             case GO_HOME:

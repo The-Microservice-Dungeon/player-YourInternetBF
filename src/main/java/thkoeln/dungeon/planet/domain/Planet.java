@@ -25,6 +25,10 @@ public class Planet {
     private String name;
 
     @Setter
+    @Getter
+    private Integer numberOfVisits;
+
+    @Setter
     @Getter ( AccessLevel.NONE )
     private Boolean spacestation = Boolean.FALSE;
     public Boolean isSpaceStation() { return spacestation; }
