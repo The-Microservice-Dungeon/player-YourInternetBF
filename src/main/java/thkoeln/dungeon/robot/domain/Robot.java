@@ -60,7 +60,11 @@ public class Robot {
                 System.out.println("_____________________________________________");
                 System.out.println("_____________________________________________");
                 System.out.println("_____________________________________________");
-                System.out.println(currentPlanet.getEastNeighbour());
+                System.out.println("**"+currentPlanet+"**");
+                System.out.println(currentPlanet.randomNeighbourPlanet());
+                currentPlanet = currentPlanet.randomNeighbourPlanet();
+                System.out.println("**"+currentPlanet+"**");
+
                 break;
 
             case GO_HOME:

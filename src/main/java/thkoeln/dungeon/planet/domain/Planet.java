@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 @Getter
@@ -92,6 +93,13 @@ public class Planet {
         if ( getEastNeighbour() != null ) allNeighbours.add( getEastNeighbour() );
         if ( getSouthNeighbour() != null ) allNeighbours.add( getSouthNeighbour() );
         return allNeighbours;
+    }
+
+    public Planet randomNeighbourPlanet (){
+
+        List<Planet> allNeighbours = this.allNeighbours();
+        Integer randomPlanet = ThreadLocalRandom.current().nextInt(0, allNeighbours.size() -1 );
+        return allNeighbours.get(randomPlanet);
     }
 
 
