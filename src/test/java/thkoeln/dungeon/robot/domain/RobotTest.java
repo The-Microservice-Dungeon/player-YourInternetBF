@@ -79,5 +79,14 @@ public class RobotTest {
         assertEquals(1, robot.getCurrentPlanet().getNumberOfVisits());
     }
 
+    @Test
+    public void testRobotMovesToLeastKnownPlanet(){
+        robot.playRound();
+        robot.playRound();
+        robot.playRound();
+        for(int x = 0; x < planetRepository.findAll().size(); x++){
+            assertTrue(planetRepository.findAll().get(x).getNumberOfVisits() < 2);
+        }
+    }
 
 }

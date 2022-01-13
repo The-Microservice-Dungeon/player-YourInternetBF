@@ -103,9 +103,14 @@ public class Planet {
     }
 
     public Planet randomLeastKnownNeighbourPlanet  (){
-
         List<Planet> allNeighbours = this.allNeighbours();
-
+        Planet leastKnownPlanet = allNeighbours.get(0);
+        for(int x = 0; x<allNeighbours.size(); x++){
+            if(allNeighbours.get(x).getNumberOfVisits() < leastKnownPlanet.getNumberOfVisits()){
+                leastKnownPlanet = allNeighbours.get(x);
+            }
+        }
+        return leastKnownPlanet;
 
     }
 
