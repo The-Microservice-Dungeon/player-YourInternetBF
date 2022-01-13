@@ -5,6 +5,7 @@ import lombok.Setter;
 import thkoeln.dungeon.planet.domain.Planet;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,9 +19,7 @@ public class Robot {
     private int test ;
 
     @ManyToOne
-    Planet planet;
-    private UUID currentPlanet  = planet.getId();
-
+    private Planet currentPlanet;
 
     // SERENDIPITY is the default mode
     @Enumerated(EnumType.ORDINAL)
@@ -55,6 +54,13 @@ public class Robot {
         switch (mode) {
             case SERENDIPITY:
                 // TODO: implement this
+                List<Planet> neighbourPlanets = currentPlanet.allNeighbours();
+                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
+                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
+                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
+                System.out.println("–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––");
+
+                System.out.println(neighbourPlanets.toString());
                 break;
 
             case GO_HOME:
