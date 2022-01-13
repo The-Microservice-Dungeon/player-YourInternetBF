@@ -63,6 +63,7 @@ public class Robot {
                 System.out.println("**"+currentPlanet+"**");
                 System.out.println(currentPlanet.randomNeighbourPlanet());
                 currentPlanet = currentPlanet.randomNeighbourPlanet();
+                currentPlanet.setNumberOfVisits(currentPlanet.getNumberOfVisits()+1);
                 System.out.println("**"+currentPlanet+"**");
 
                 break;

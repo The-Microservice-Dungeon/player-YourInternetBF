@@ -27,7 +27,7 @@ public class Planet {
 
     @Setter
     @Getter
-    private Integer numberOfVisits;
+    private Integer numberOfVisits = 0;
 
     @Setter
     @Getter ( AccessLevel.NONE )
@@ -101,6 +101,7 @@ public class Planet {
         Integer randomPlanet = ThreadLocalRandom.current().nextInt(0, allNeighbours.size() -1 );
         return allNeighbours.get(randomPlanet);
     }
+
 
 
     @Override

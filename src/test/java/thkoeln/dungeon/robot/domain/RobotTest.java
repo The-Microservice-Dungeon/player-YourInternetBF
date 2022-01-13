@@ -7,6 +7,7 @@ import thkoeln.dungeon.planet.domain.CompassDirection;
 import thkoeln.dungeon.planet.domain.Planet;
 import thkoeln.dungeon.planet.domain.PlanetRepository;
 
+import javax.transaction.Transactional;
 import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,11 +25,26 @@ public class RobotTest {
     private PlanetRepository planetRepository;
 
     @BeforeEach
+    @Transactional
     public void setup() {
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 planetArray[i][j] = new Planet();
                 planetArray[i][j].setName("p" + String.valueOf(i) + String.valueOf(j));
+            }
+        }
+
+        for( int i = 0; i<=2; i++ ) {
+            for (int j = 0; j <= 2; j++) {
+                if ( i < 2 ) planetArray[i][j].defineNeighbour( planetArray[i+1][j], CompassDirection.east );
+                if ( j < 2 ) planetArray[i][j].defineNeighbour( planetArray[i][j+1], CompassDirection.south );
+            }
+        }
+
+
+        for( int i = 0; i<=2; i++ ) {
+            for (int j = 0; j <= 2; j++) {
+                planetRepository.save( planetArray[i][j] );
             }
         }
         planetStartingPosition = planetArray[0][0];
@@ -52,6 +68,15 @@ public class RobotTest {
 
         //then
         assertNotSame(planetArray[0][0], robot.getCurrentPlanet());
+    }
+
+    @Test
+    public void testNumberOfVisitsCounter() {
+        //given
+        //when
+        robot.playRound();
+        //then
+        assertEquals(1, robot.getCurrentPlanet().getNumberOfVisits());
     }
 
 
