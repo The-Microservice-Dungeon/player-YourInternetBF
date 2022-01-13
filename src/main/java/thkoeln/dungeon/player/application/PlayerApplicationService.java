@@ -173,7 +173,7 @@ public class PlayerApplicationService {
         } catch (RESTConnectionFailureException | RESTRequestDeniedException e) {
             // shouldn't happen - cannot do more than logging and retrying later
             // todo - err msg wrong
-            logger.error( "Could register " + player + " for " + game +
+            logger.error( "Could not register " + player + " for " + game +
                     "\nOriginal Exception:\n" + e.getMessage() + "\n" + e.getStackTrace() );
         }
     }

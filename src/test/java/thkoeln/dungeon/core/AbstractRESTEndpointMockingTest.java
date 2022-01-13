@@ -42,7 +42,6 @@ public class AbstractRESTEndpointMockingTest {
     }
 
     protected void mockBearerTokenEndpointFor( Player player ) throws Exception {
-        //mockServer = MockRestServiceServer.createServer(restTemplate);
         PlayerRegistryDto playerRegistryDto = modelMapper.map(player, PlayerRegistryDto.class);
         PlayerRegistryDto responseDto = playerRegistryDto.clone();
         responseDto.setBearerToken(UUID.randomUUID());
@@ -54,7 +53,6 @@ public class AbstractRESTEndpointMockingTest {
 
 
     protected void mockRegistrationEndpointFor( Player player, UUID gameId ) throws Exception {
-        //mockServer = MockRestServiceServer.createServer(restTemplate);
         URI uri = new URI(gameServiceURIString + "/games/" + gameId + "/players/" + player.getBearerToken());
         mockServer.expect( ExpectedCount.manyTimes(), requestTo(uri) )
                 .andExpect(method(PUT))
