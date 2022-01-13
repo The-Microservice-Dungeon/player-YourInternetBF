@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 @Getter
@@ -23,6 +24,10 @@ public class Planet {
 
     @Setter
     private String name;
+
+    @Setter
+    @Getter
+    private Integer numberOfVisits = 0;
 
     @Setter
     @Getter ( AccessLevel.NONE )
@@ -90,6 +95,23 @@ public class Planet {
         return allNeighbours;
     }
 
+    public Planet randomNeighbourPlanet (){
+        List<Planet> allNeighbours = this.allNeighbours();
+        Integer randomPlanet = ThreadLocalRandom.current().nextInt(0, allNeighbours.size() -1 );
+        return allNeighbours.get(randomPlanet);
+    }
+
+    public Planet randomLeastKnownNeighbourPlanet  (){
+        List<Planet> allNeighbours = this.allNeighbours();
+        Planet leastKnownPlanet = allNeighbours.get(0);
+        for(int x = 0; x<allNeighbours.size(); x++){
+            if(allNeighbours.get(x).getNumberOfVisits() < leastKnownPlanet.getNumberOfVisits()){
+                leastKnownPlanet = allNeighbours.get(x);
+            }
+        }
+        return leastKnownPlanet;
+
+    }
 
     @Override
     public boolean equals(Object o) {

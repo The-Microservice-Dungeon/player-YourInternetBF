@@ -44,22 +44,40 @@ public class RobotService {
             if (robot.getMode().equals(ROBOT_MODE.SERENDIPITY)) doExplorationWith(robot);
             if (robot.getMode().equals(ROBOT_MODE.GO_HOME)) goHomeWith(robot);
             if (robot.getMode().equals(ROBOT_MODE.BUY_ROBOT)) buyNewRobotWith(robot);
+
+            // save the new position
+            robotRepository.save(robot);
         }
     }
 
     private void doExplorationWith(Robot robot) {
         // TODO: implement this
+        //first step look at neighbouring planets
+        //go to neighbouring Planet with lowest numberOfVisits
+        System.out.println("_____________________________________________");
+        System.out.println("_____________________________________________");
+        System.out.println("_____________________________________________");
+        System.out.println("_____________________________________________");
+        System.out.println("**"+robot.getCurrentPlanet()+"**");
+        System.out.println(robot.getCurrentPlanet().randomNeighbourPlanet());
+        if(robot.getCurrentPlanet().getNumberOfVisits() == 0){
+            robot.getCurrentPlanet().setNumberOfVisits(1);
+        }
+        robot.setCurrentPlanet(robot.getCurrentPlanet().randomNeighbourPlanet());
+        robot.getCurrentPlanet().setNumberOfVisits(robot.getCurrentPlanet().getNumberOfVisits()+1);
+        System.out.println("**"+robot.getCurrentPlanet()+"**");
+        System.out.println("Nachbarn -->"+robot.getCurrentPlanet().allNeighbours());
     }
 
     private void goHomeWith(Robot robot) {
         // this is the end goal of this mode
-        if (robot.getPlanet().isSpaceStation()) return;
+        if (robot.getCurrentPlanet().isSpaceStation()) return;
 
         List<Planet> planets = this.planetService.getPlanetsWithSpacestation();
         // TODO: implement coordinate system
         // TODO: & then calculate distance between Robot and Spacestation using Pythagoras (a^2 + b^2 = c^2)
         Planet destinationPlanet = planets.get(0);
-        Planet departurePlanet = robot.getPlanet();
+        Planet departurePlanet = robot.getCurrentPlanet();
 
         // if one of the neighbours of the robot's planet is the destination planet,
         // then just move on that planet

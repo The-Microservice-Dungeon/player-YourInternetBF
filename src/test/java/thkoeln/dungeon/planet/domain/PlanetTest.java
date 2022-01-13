@@ -45,6 +45,7 @@ public class PlanetTest {
 
     @Test
     public void testEstablishNeighbouringRelationship() {
+        Planet planet = new Planet();
         // given
         // when
         planetArray[0][1].defineNeighbour( planetArray[1][1], CompassDirection.east );
@@ -55,6 +56,8 @@ public class PlanetTest {
         assertEquals( planetArray[0][1], planetArray[1][1].getWestNeighbour() );
         assertEquals( planetArray[0][2], planetArray[0][1].getNorthNeighbour() );
         assertEquals( planetArray[0][1], planetArray[0][2].getSouthNeighbour() );
+        System.out.println("-----------------");
+        System.out.println(planet.allNeighbours());
     }
 
 

@@ -6,6 +6,7 @@ import thkoeln.dungeon.planet.domain.CompassDirection;
 import thkoeln.dungeon.planet.domain.Planet;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,9 +20,7 @@ public class Robot {
     private int test ;
 
     @ManyToOne
-    Planet planet;
-    private UUID currentPlanet  = planet.getId();
-
+    private Planet currentPlanet;
 
     // SERENDIPITY is the default mode
     @Enumerated(EnumType.ORDINAL)

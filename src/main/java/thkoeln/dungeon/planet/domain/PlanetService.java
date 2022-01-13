@@ -10,7 +10,7 @@ import java.util.List;
 public class PlanetService {
     private final PlanetRepository planetRepository;
 
-    PlanetService(PlanetRepository planetRepository) {
+    public PlanetService(PlanetRepository planetRepository) {
         this.planetRepository = planetRepository;
     }
 
