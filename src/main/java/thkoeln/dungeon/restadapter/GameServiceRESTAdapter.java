@@ -7,14 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 import thkoeln.dungeon.restadapter.exceptions.RESTConnectionFailureException;
 import thkoeln.dungeon.restadapter.exceptions.RESTRequestDeniedException;
 import thkoeln.dungeon.restadapter.exceptions.UnexpectedRESTException;
@@ -23,13 +18,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.UUID;
 
+import static org.springframework.http.HttpMethod.PUT;
+
+/**
+ * Adapter for sending Game and Player life cycle calls to GameService
+ */
 @Component
 public class GameServiceRESTAdapter {
-
     private RestTemplate restTemplate;
     private Logger logger = LoggerFactory.getLogger( GameServiceRESTAdapter.class );
     @Value("${GAME_SERVICE:http://localhost:8080}")
     private String gameServiceUrlString;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public GameServiceRESTAdapter(RestTemplate restTemplate ) {
@@ -95,17 +95,15 @@ public class GameServiceRESTAdapter {
      * Caveat: GameService returns somewhat weird error codes (non-standard).
      * @param gameId of the game
      * @param bearerToken of the player
-     * @return true if successful
+     * @return transactionId if successful
      */
-    public boolean registerPlayerForGame( UUID gameId, UUID bearerToken )
+    public UUID registerPlayerForGame( UUID gameId, UUID bearerToken )
             throws RESTConnectionFailureException, RESTRequestDeniedException {
         String urlString = gameServiceUrlString + "/games/" + gameId + "/players/" + bearerToken;
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType( MediaType.APPLICATION_JSON );
-            HttpEntity<String> request = new HttpEntity<String>( headers );
-            restTemplate.put( urlString, request );
-            return true;
+            TransactionIdResponseDto transactionIdResponseDto =
+                    restTemplate.execute( urlString, PUT, requestCallback(), responseExtractor() );
+            return transactionIdResponseDto.getTransactionId();
         }
         catch ( HttpClientErrorException e ) {
             if ( e.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE) ) {
@@ -125,5 +123,21 @@ public class GameServiceRESTAdapter {
         catch ( RestClientException e ) {
             throw new RESTConnectionFailureException( urlString, e.getMessage() );
         }
+    }
+
+
+    /**
+     * Adapted from Baeldung example: https://www.baeldung.com/rest-template
+     */
+    private RequestCallback requestCallback() {
+        return clientHttpRequest -> {
+            clientHttpRequest.getHeaders().setContentType( MediaType.APPLICATION_JSON );
+        };
+    }
+
+    private ResponseExtractor<TransactionIdResponseDto> responseExtractor() {
+        return response -> {
+            return objectMapper.readValue( response.getBody(), TransactionIdResponseDto.class );
+        };
     }
 }

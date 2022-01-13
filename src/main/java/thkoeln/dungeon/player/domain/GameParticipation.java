@@ -21,11 +21,13 @@ public class GameParticipation {
     @Id
     private final UUID id = UUID.randomUUID();
     private Integer money;
+    private UUID registrationTransactionId;
 
     @ManyToOne
     private Game game;
 
-    public GameParticipation( Game game ) {
+    public GameParticipation( Game game, UUID registrationTransactionId ) {
+        this.registrationTransactionId = registrationTransactionId;
         this.game = game;
     }
 

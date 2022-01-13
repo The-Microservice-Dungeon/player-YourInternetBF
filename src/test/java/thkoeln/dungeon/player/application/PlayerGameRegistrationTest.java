@@ -66,6 +66,7 @@ public class PlayerGameRegistrationTest extends AbstractRESTEndpointMockingTest 
         List<Player> readyPlayers = playerRepository.findByGameParticipations_Game( game );
         assertEquals( 1, readyPlayers.size() );
         assert( readyPlayers.get( 0 ).isParticipantInGame( game ) );
+        assertEquals( transactionId, readyPlayers.get( 0 ).getGameParticipations().get( 0 ).getRegistrationTransactionId() );
     }
 
 

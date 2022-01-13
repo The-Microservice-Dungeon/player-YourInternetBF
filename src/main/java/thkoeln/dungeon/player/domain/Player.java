@@ -43,8 +43,8 @@ public class Player {
     }
 
 
-    public void participateInGame( Game game ) {
-        GameParticipation gameParticipation = new GameParticipation( game );
+    public void participateInGame( Game game, UUID registrationTransactionId ) {
+        GameParticipation gameParticipation = new GameParticipation( game, registrationTransactionId );
         gameParticipations.add( gameParticipation );
     }
 

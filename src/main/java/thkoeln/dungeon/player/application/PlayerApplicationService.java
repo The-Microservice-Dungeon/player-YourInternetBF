@@ -164,11 +164,12 @@ public class PlayerApplicationService {
                 logger.error("No bearer token for " + player + " also after another attempt - cannot register for game!");
                 return;
             }
-            boolean success = gameServiceRESTAdapter.registerPlayerForGame(game.getGameId(), player.getBearerToken());
-            if (success) {
-                player.participateInGame(game);
-                playerRepository.save(player);
-                logger.info("Player " + player + " successfully registered for game " + game);
+            UUID transactionId = gameServiceRESTAdapter.registerPlayerForGame( game.getGameId(), player.getBearerToken() );
+            if ( transactionId != null ) {
+                player.participateInGame( game, transactionId );
+                playerRepository.save( player );
+                logger.info("Player " + player + " successfully registered for game " + game +
+                        " with transactionId " + transactionId );
             }
         } catch (RESTConnectionFailureException | RESTRequestDeniedException e) {
             // shouldn't happen - cannot do more than logging and retrying later
@@ -178,5 +179,12 @@ public class PlayerApplicationService {
         }
     }
 
+
+    /**
+     *
+     */
+    public void assignPlayerId( UUID transactionId, UUID playerId ) {
+
+    }
 
 }
