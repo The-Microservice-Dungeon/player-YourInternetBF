@@ -1,5 +1,7 @@
 package thkoeln.dungeon.planet.domain;
 
+import java.util.Random;
+
 public enum CompassDirection {
     north, east, south, west;
 
@@ -11,5 +13,18 @@ public enum CompassDirection {
             case west: return east;
         }
         return null;
+    }
+
+    public static CompassDirection getRandomDirection() {
+        Random random = new Random();
+        int i = 0;
+        int randInt = random.nextInt(3);
+        for (CompassDirection value : CompassDirection.values()) {
+            if (randInt == i) {
+                return value;
+            }
+
+            i++;
+        }
     }
 }

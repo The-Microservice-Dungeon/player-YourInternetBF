@@ -2,6 +2,7 @@ package thkoeln.dungeon.robot.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import thkoeln.dungeon.planet.domain.CompassDirection;
 import thkoeln.dungeon.planet.domain.Planet;
 
 import javax.persistence.*;
@@ -49,4 +50,8 @@ public class Robot {
 
     @Column()
     private Integer platin;
+
+    public void move(CompassDirection direction) {
+        // TODO: implement this
+    }
 }

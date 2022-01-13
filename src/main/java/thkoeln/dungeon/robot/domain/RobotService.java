@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import thkoeln.dungeon.planet.domain.CompassDirection;
 import thkoeln.dungeon.planet.domain.Planet;
 import thkoeln.dungeon.planet.domain.PlanetService;
 
@@ -55,7 +56,26 @@ public class RobotService {
         // TODO: implement coordinate system
         // TODO: & then calculate distance between Robot and Spacestation using Pythagoras (a^2 + b^2 = c^2)
         Planet destinationPlanet = planets.get(0);
-        robot.getPlanet()
+        Planet departurePlanet = robot.getPlanet();
+
+        if (destinationPlanet.getEastNeighbour().equals(departurePlanet)) {
+            robot.move(CompassDirection.east);
+            return;
+        }
+        if (destinationPlanet.getSouthNeighbour().equals(departurePlanet)) {
+            robot.move(CompassDirection.south);
+            return;
+        }
+        if (destinationPlanet.getWestNeighbour().equals(departurePlanet)) {
+            robot.move(CompassDirection.west);
+            return;
+        }
+        if (destinationPlanet.getNorthNeighbour().equals(departurePlanet)) {
+            robot.move(CompassDirection.north);
+            return;
+        }
+
+        robot.move(CompassDirection.getRandomDirection());
     }
 
     private void buyNewRobotWith(Robot robot) {
