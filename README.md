@@ -16,7 +16,7 @@ Authors:
 - [x] Gebe Zustand aller Robots aus.
 
 ### Domain-driven-design layer
-- [ ] Der Modus "Go Home".
+- [x] Der Modus "Go Home".
 - [ ] Der Modus "Serendipity".
 - [ ] Gebe eine Übersicht aller bekannten Planeten mit den Positionen der eigenen Robots aus.
 - [ ] Gebe den Zustand eines Roboter
