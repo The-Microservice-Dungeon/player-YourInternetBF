@@ -16,10 +16,7 @@ public class Robot {
     @Id
     private final UUID id = UUID.randomUUID();
 
-    @Getter
-    private int test ;
-
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Planet currentPlanet;
 
     // SERENDIPITY is the default mode

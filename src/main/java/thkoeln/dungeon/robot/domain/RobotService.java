@@ -51,22 +51,14 @@ public class RobotService {
     }
 
     private void doExplorationWith(Robot robot) {
-        // TODO: implement this
-        //first step look at neighbouring planets
-        //go to neighbouring Planet with lowest numberOfVisits
-        System.out.println("_____________________________________________");
-        System.out.println("_____________________________________________");
-        System.out.println("_____________________________________________");
-        System.out.println("_____________________________________________");
-        System.out.println("**"+robot.getCurrentPlanet()+"**");
-        System.out.println(robot.getCurrentPlanet().randomNeighbourPlanet());
-        if(robot.getCurrentPlanet().getNumberOfVisits() == 0){
-            robot.getCurrentPlanet().setNumberOfVisits(1);
+        // if the robot's planet visits == 0 then add one visit
+        // this only happens when the robot just spawned on that planet
+        if (robot.getCurrentPlanet().getNumberOfVisits().equals(0)) {
+            planetService.addOneVisit(robot.getCurrentPlanet());
         }
-        robot.setCurrentPlanet(robot.getCurrentPlanet().randomNeighbourPlanet());
-        robot.getCurrentPlanet().setNumberOfVisits(robot.getCurrentPlanet().getNumberOfVisits()+1);
-        System.out.println("**"+robot.getCurrentPlanet()+"**");
-        System.out.println("Nachbarn -->"+robot.getCurrentPlanet().allNeighbours());
+
+        Planet newPlanet = planetService.addOneVisit(robot.getCurrentPlanet().randomLeastKnownNeighbourPlanet());
+        robot.setCurrentPlanet(newPlanet);
     }
 
     private void goHomeWith(Robot robot) {

@@ -1,18 +1,14 @@
 package thkoeln.dungeon.robot.domain;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import thkoeln.dungeon.planet.domain.CompassDirection;
 import thkoeln.dungeon.planet.domain.Planet;
 import thkoeln.dungeon.planet.domain.PlanetRepository;
-import thkoeln.dungeon.planet.domain.PlanetService;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,6 +70,10 @@ public class RobotTest {
         //System.out.println(robot.getCurrentPlanet());
     }
 
+    private void fetchRobot () {
+        this.robot = this.robotRepository.findById(this.robot.getId()).get();
+    }
+
     @Test
     public void testRobotIsOnStartingPosition() {
         //then
@@ -86,7 +86,8 @@ public class RobotTest {
 
         //when
         robotService.playRound();
-        robotRepository.save(robot);
+        fetchRobot();
+
 
         System.out.println("Start planet:" + startPlanet);
         System.out.println("Current planet:" + robot.getCurrentPlanet());
@@ -100,6 +101,8 @@ public class RobotTest {
         //given
         //when
         robotService.playRound();
+
+        fetchRobot();
 
         //then
         assertEquals(1, robot.getCurrentPlanet().getNumberOfVisits());

@@ -73,7 +73,6 @@ public class Planet {
         logger.info( "Established neighbouring relationship between planet '" + this + "' and '" + otherPlanet + "'." );
     }
 
-
     protected Method neighbouringGetter( CompassDirection direction ) throws NoSuchMethodException {
         String name = "get" + WordUtils.capitalize( String.valueOf( direction ) ) + "Neighbour";
         return this.getClass().getDeclaredMethod( name );
