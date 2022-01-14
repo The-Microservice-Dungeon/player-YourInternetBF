@@ -21,7 +21,7 @@ Authors:
 - [ ] Gebe eine Übersicht aller bekannten Planeten mit den Positionen der eigenen Robots aus.
 - [x] Gebe den Zustand eines Roboter
 - [x] Gebe den Zustand aller Roboter
-- [ ] "Kaufe einen Roboter in der nächsten Runde" - Befehl
+- [x] "Kaufe einen Roboter in der nächsten Runde" - Befehl
 
 ### Sonstiges, wenn noch genügend Zeit da wäre
 - [ ] Eine Map für die Konsole

@@ -97,10 +97,18 @@ public class RobotService {
     }
 
     private void buyNewRobotWith(Robot robot) {
-        // TODO: implement this
+        // in order to be able to buy a new roboter, one robot of us needs to be in a spacestation
+        // therefor we are ordering the robot to go home, if it isn't on a space-station planet
+        if (!robot.getCurrentPlanet().isSpaceStation()) {
+            this.goHomeWith(robot);
+        } else {
+            this.buyRobot();
+        }
     }
 
-
+    private void buyRobot () {
+        // TODO: implement this
+    }
 
 
     public List<RobotStateDTO> getRobotStateOfAllRobots() {
