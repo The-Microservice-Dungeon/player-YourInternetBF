@@ -23,6 +23,11 @@ Authors:
 - [x] Gebe den Zustand aller Roboter
 - [ ] "Kaufe einen Roboter in der nächsten Runde" - Befehl
 
+### Sonstiges, wenn noch genügend Zeit da wäre
+- [ ] Eine Map für die Konsole
+- [ ] Ein Koordinatensystem
+
+
 ---
 
 ### Minimalanforderungen an den Player
