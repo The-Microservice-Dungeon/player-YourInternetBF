@@ -46,8 +46,4 @@ public class Robot {
 
     @Column()
     private Integer platin;
-
-    public void move(CompassDirection direction) {
-        // TODO: implement this
-    }
 }

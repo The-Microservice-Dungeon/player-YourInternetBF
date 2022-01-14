@@ -1,10 +1,14 @@
 package thkoeln.dungeon.robot.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import thkoeln.dungeon.planet.domain.CompassDirection;
+import thkoeln.dungeon.command.application.MoveBatch;
 import thkoeln.dungeon.planet.domain.Planet;
 import thkoeln.dungeon.planet.domain.PlanetService;
 
@@ -14,6 +18,7 @@ import java.util.*;
 public class RobotService {
     private final RobotRepository robotRepository;
     private final PlanetService planetService;
+    private HashMap<UUID, UUID> transactionIds = new HashMap<>();
 
     @Autowired
     public RobotService(
@@ -30,27 +35,48 @@ public class RobotService {
         return fetchRobotById(robotId);
     }
 
+    @KafkaListener(topics = "movement")
+    public void consumeMovementEvent (@Header String eventId, @Header String transactionId, @Payload String payload) {
+        try {
+            RobotMoveEvent moveEvent = RobotMoveEvent.fromJsonString(payload);
+            moveRobot(transactionIds.get(transactionId), moveEvent.getPlanetMoveInformation().getPlanetId());
+        } catch (JsonProcessingException e) {
+            System.out.println( "Caught invalid RobotMoveEvent" );
+
+        }
+    }
+
+    private void moveRobot(UUID robotUUID, UUID planetId){
+        Robot robot = fetchRobotById(robotUUID);
+        Planet planet = planetService.getPlanetById(planetId).get();
+
+        robot.setCurrentPlanet(planet);
+        robotRepository.save(robot);
+        System.out.println("Moved robot " + robotUUID + " to " + planet);
+    }
+
     /***
      * This method is executed at the beginning of each round
      */
     // TODO execute this method at the beginning of a round
     public void playRound() {
+        MoveBatch moveBatch = new MoveBatch();
         Iterable<Robot> robots = this.robotRepository.findAll();
 
         for (Robot robot : robots) {
             // in case the robot is in ROBOT_MODE.IDLE,
             // we ignore that since that is what we expect in that mode
-
-            if (robot.getMode().equals(ROBOT_MODE.SERENDIPITY)) doExplorationWith(robot);
-            if (robot.getMode().equals(ROBOT_MODE.GO_HOME)) goHomeWith(robot);
-            if (robot.getMode().equals(ROBOT_MODE.BUY_ROBOT)) buyNewRobotWith(robot);
+            if (robot.getMode().equals(ROBOT_MODE.SERENDIPITY)) moveBatch.addMovement(doExplorationWith(robot));
+            if (robot.getMode().equals(ROBOT_MODE.GO_HOME)) moveBatch.addMovement(goHomeWith(robot));
+            if (robot.getMode().equals(ROBOT_MODE.BUY_ROBOT)) moveBatch.addMovement(buyNewRobotWith(robot));
 
             // save the new position
             robotRepository.save(robot);
         }
     }
 
-    private void doExplorationWith(Robot robot) {
+    private MoveBatch.Movement doExplorationWith(Robot robot) {
+        MoveBatch.Movement movement = new MoveBatch.Movement();
         // if the robot's planet visits == 0 then add one visit
         // this only happens when the robot just spawned on that planet
         if (robot.getCurrentPlanet().getNumberOfVisits().equals(0)) {
@@ -58,12 +84,19 @@ public class RobotService {
         }
 
         Planet newPlanet = planetService.addOneVisit(robot.getCurrentPlanet().randomLeastKnownNeighbourPlanet());
-        robot.setCurrentPlanet(newPlanet);
+        movement.setRobot(robot);
+        transactionIds.put(movement.getTransactionID(), robot.getId());
+        movement.setTargetPlanet(newPlanet);
+        return movement;
     }
 
-    private void goHomeWith(Robot robot) {
+    private Optional<MoveBatch.Movement> goHomeWith(Robot robot) {
         // this is the end goal of this mode
-        if (robot.getCurrentPlanet().isSpaceStation()) return;
+        if (robot.getCurrentPlanet().isSpaceStation()) return Optional.empty();
+
+        MoveBatch.Movement movement = new MoveBatch.Movement();
+        movement.setRobot(robot);
+        transactionIds.put(movement.getTransactionID(), robot.getId());
 
         List<Planet> planets = this.planetService.getPlanetsWithSpacestation();
         // TODO: implement coordinate system
@@ -74,35 +107,39 @@ public class RobotService {
         // if one of the neighbours of the robot's planet is the destination planet,
         // then just move on that planet
         if (destinationPlanet.getEastNeighbour().equals(departurePlanet)) {
-            robot.move(CompassDirection.east);
-            return;
+            movement.setTargetPlanet(destinationPlanet.getEastNeighbour());
+            return Optional.of(movement);
         }
         if (destinationPlanet.getSouthNeighbour().equals(departurePlanet)) {
-            robot.move(CompassDirection.south);
-            return;
+            movement.setTargetPlanet(destinationPlanet.getSouthNeighbour());
+            return Optional.of(movement);
         }
         if (destinationPlanet.getWestNeighbour().equals(departurePlanet)) {
-            robot.move(CompassDirection.west);
-            return;
+            movement.setTargetPlanet(destinationPlanet.getWestNeighbour());
+            return Optional.of(movement);
+
         }
         if (destinationPlanet.getNorthNeighbour().equals(departurePlanet)) {
-            robot.move(CompassDirection.north);
-            return;
+            movement.setTargetPlanet(destinationPlanet.getNorthNeighbour());
+            return Optional.of(movement);
         }
 
         // if the destination planet is out of reach then move to a random planet
         // if we would have more time for this class, we would have implemented another more sophisticated
         // way of moving to a spacestation
-        robot.move(CompassDirection.getRandomDirection());
+        movement.setTargetPlanet(destinationPlanet.randomNeighbourPlanet());
+        return Optional.of(movement);
     }
 
-    private void buyNewRobotWith(Robot robot) {
+    private Optional<MoveBatch.Movement> buyNewRobotWith(Robot robot) {
         // in order to be able to buy a new roboter, one robot of us needs to be in a spacestation
         // therefor we are ordering the robot to go home, if it isn't on a space-station planet
         if (!robot.getCurrentPlanet().isSpaceStation()) {
-            this.goHomeWith(robot);
+            return this.goHomeWith(robot);
         } else {
             this.buyRobot();
+            // TODO: add buy action to commands
+            return Optional.empty();
         }
     }
 

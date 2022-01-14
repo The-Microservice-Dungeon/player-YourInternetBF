@@ -1,7 +1,6 @@
 package thkoeln.dungeon.planet.domain;
 
 import org.springframework.stereotype.Service;
-import thkoeln.dungeon.robot.domain.RobotRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,4 +52,8 @@ public class PlanetService {
         knownPlanet.setId(planet.getId());
         return knownPlanet;
     }
- }
+
+    public Optional<Planet> getPlanetById(UUID planetId) {
+        return this.planetRepository.findById(planetId);
+    }
+}

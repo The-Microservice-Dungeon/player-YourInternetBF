@@ -14,19 +14,4 @@ public enum CompassDirection {
         }
         return null;
     }
-
-    public static CompassDirection getRandomDirection() {
-        Random random = new Random();
-        int i = 0;
-        int randInt = random.nextInt(3);
-        for (CompassDirection value : CompassDirection.values()) {
-            if (randInt == i) {
-                return value;
-            }
-
-            i++;
-        }
-        // this should never be the case, but to avoid an exception we just return north
-        return CompassDirection.north;
-    }
 }
