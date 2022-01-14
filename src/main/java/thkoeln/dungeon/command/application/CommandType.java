@@ -1,4 +1,4 @@
-package thkoeln.dungeon.command.domain;
+package thkoeln.dungeon.command.application;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

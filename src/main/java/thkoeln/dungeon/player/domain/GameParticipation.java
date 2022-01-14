@@ -20,15 +20,19 @@ import java.util.UUID;
 public class GameParticipation {
     @Id
     private final UUID id = UUID.randomUUID();
-    private Integer money;
+    private Integer money = 0;
     private UUID registrationTransactionId;
 
     @ManyToOne
     private Game game;
 
-    public GameParticipation( Game game, UUID registrationTransactionId ) {
+    @ManyToOne
+    private Player player;
+
+    public GameParticipation( Player player, Game game, UUID registrationTransactionId ) {
         this.registrationTransactionId = registrationTransactionId;
         this.game = game;
+        this.player = player;
     }
 
 }

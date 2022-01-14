@@ -12,8 +12,7 @@ import thkoeln.dungeon.DungeonPlayerConfiguration;
 import thkoeln.dungeon.core.AbstractRESTEndpointMockingTest;
 import thkoeln.dungeon.game.domain.Game;
 import thkoeln.dungeon.game.domain.GameRepository;
-import thkoeln.dungeon.player.domain.Player;
-import thkoeln.dungeon.player.domain.PlayerRepository;
+import thkoeln.dungeon.player.domain.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +24,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest( classes = DungeonPlayerConfiguration.class )
 public class PlayerGameRegistrationTest extends AbstractRESTEndpointMockingTest {
     private Player player, playerWithoutToken;
+    private UUID playerId = UUID.randomUUID();
     @Autowired
     private Environment env;
     @Autowired
@@ -33,6 +33,10 @@ public class PlayerGameRegistrationTest extends AbstractRESTEndpointMockingTest 
     private PlayerRepository playerRepository;
     @Autowired
     private PlayerApplicationService playerApplicationService;
+    @Autowired
+    private PlayerDomainService playerDomainService;
+    @Autowired
+    private GameParticipationRepository gameParticipationRepository;
 
 
     @Before
@@ -54,19 +58,24 @@ public class PlayerGameRegistrationTest extends AbstractRESTEndpointMockingTest 
         // given
         mockBearerTokenEndpointFor( player );
         playerApplicationService.obtainBearerTokenForPlayer( player );
-        assert ( player.isReadyToPlay() );
+        assert ( player.getBearerToken() != null );
         super.resetMockServer();
         mockBearerTokenEndpointFor( player );
         mockRegistrationEndpointFor( player, game.getGameId() );
 
         // when
         playerApplicationService.registerOnePlayerForGame( player, game );
+        // ... and we assume that the playerStatus event comes after that
+        playerApplicationService.assignPlayerId( transactionId, playerId );
 
         // then
-        List<Player> readyPlayers = playerRepository.findByGameParticipations_Game( game );
+        List<Player> readyPlayers = playerDomainService.findPlayersForGame( game );
         assertEquals( 1, readyPlayers.size() );
-        assert( readyPlayers.get( 0 ).isParticipantInGame( game ) );
-        assertEquals( transactionId, readyPlayers.get( 0 ).getGameParticipations().get( 0 ).getRegistrationTransactionId() );
+        assertEquals( player, readyPlayers.get( 0 ) );
+        List<GameParticipation> foundGameParticipations =
+                gameParticipationRepository.findByRegistrationTransactionId( transactionId );
+        assertEquals( 1, foundGameParticipations.size() );
+        assertTrue( readyPlayers.get( 0 ).isReadyToPlay() );
     }
 
 
