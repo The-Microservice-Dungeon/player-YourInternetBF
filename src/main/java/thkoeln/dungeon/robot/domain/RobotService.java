@@ -142,6 +142,25 @@ public class RobotService {
         return robotState;
     }
 
+    private RobotPositionDTO getRobotPosition(Robot robot){
+        RobotPositionDTO robotPosition = new RobotPositionDTO();
+        robotPosition.setRobotID(robot.getId());
+        robotPosition.setCurrentPlanetName(robot.getCurrentPlanet().getName());
+        robotPosition.setCurrentPlanetID((robot.getCurrentPlanet().getId()));
+
+        return robotPosition;
+    }
+
+    private List<RobotPositionDTO> getRobotPositions(){
+        Iterable<Robot> allRobots = this.robotRepository.findAll();
+        List<RobotPositionDTO> robotPositionDTOS = new ArrayList<>();
+        for(Robot robot: allRobots){
+            RobotPositionDTO robotPosition = getRobotPosition(robot);
+            robotPositionDTOS.add(robotPosition);
+        }
+        return robotPositionDTOS;
+    }
+
     private Robot fetchRobotById(UUID robotId) {
         Optional<Robot> robotResult = this.robotRepository.findById(robotId);
 

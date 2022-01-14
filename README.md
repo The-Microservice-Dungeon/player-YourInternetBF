@@ -18,7 +18,7 @@ Authors:
 ### Domain-driven-design layer
 - [x] Der Modus "Go Home".
 - [x] Der Modus "Serendipity".
-- [ ] Gebe eine Übersicht aller bekannten Planeten mit den Positionen der eigenen Robots aus.
+- [x] Gebe eine Übersicht aller bekannten Planeten mit den Positionen der eigenen Robots aus.
 - [x] Gebe den Zustand eines Roboter
 - [x] Gebe den Zustand aller Roboter
 - [x] "Kaufe einen Roboter in der nächsten Runde" - Befehl

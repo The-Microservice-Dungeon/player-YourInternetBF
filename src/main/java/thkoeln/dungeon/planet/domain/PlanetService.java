@@ -38,4 +38,19 @@ public class PlanetService {
 
         return planets;
     }
+
+    public List<PlanetDTO> getListOfKnownPlanets(){
+        List<PlanetDTO> knownPlanets = new ArrayList<>();
+        for(Planet planet : this.planetRepository.findAll()){
+            knownPlanets.add(getPlanetDTO(planet));
+        }
+        return knownPlanets;
+    }
+
+    public PlanetDTO getPlanetDTO(Planet planet){
+        PlanetDTO knownPlanet = new PlanetDTO();
+        knownPlanet.setName(planet.getName());
+        knownPlanet.setId(planet.getId());
+        return knownPlanet;
+    }
  }
