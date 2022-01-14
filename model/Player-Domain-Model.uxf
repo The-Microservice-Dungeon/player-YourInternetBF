@@ -4,7 +4,7 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>990</x>
+      <x>999</x>
       <y>171</y>
       <w>180</w>
       <h>99</h>
@@ -21,7 +21,7 @@ currentRoundCount: Int</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>405</x>
+      <x>414</x>
       <y>162</y>
       <w>180</w>
       <h>108</h>
@@ -38,7 +38,7 @@ email: String</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>711</x>
+      <x>720</x>
       <y>351</y>
       <w>144</w>
       <h>54</h>
@@ -54,7 +54,7 @@ id: UUID
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>702</x>
+      <x>711</x>
       <y>171</y>
       <w>180</w>
       <h>72</h>
@@ -69,12 +69,12 @@ money: Integer</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>576</x>
+      <x>585</x>
       <y>189</y>
       <w>144</w>
       <h>36</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
+    <panel_attributes>lt=&lt;-
 m1=1
 m2=*</panel_attributes>
     <additional_attributes>10.0;10.0;140.0;10.0</additional_attributes>
@@ -82,7 +82,7 @@ m2=*</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>873</x>
+      <x>882</x>
       <y>189</y>
       <w>135</w>
       <h>36</h>
@@ -95,7 +95,7 @@ m2=*</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>990</x>
+      <x>999</x>
       <y>351</y>
       <w>180</w>
       <h>63</h>
@@ -111,7 +111,7 @@ name: String
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>945</x>
+      <x>954</x>
       <y>405</y>
       <w>333</w>
       <h>126</h>
@@ -129,7 +129,7 @@ north- | east- | south- | westNeighbour
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>234</x>
+      <x>243</x>
       <y>216</y>
       <w>90</w>
       <h>27</h>
@@ -144,7 +144,7 @@ layer=10
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>225</x>
+      <x>234</x>
       <y>162</y>
       <w>108</w>
       <h>198</h>
@@ -158,7 +158,7 @@ Aggregates</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>234</x>
+      <x>243</x>
       <y>252</y>
       <w>90</w>
       <h>27</h>
@@ -172,7 +172,7 @@ layer=10
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>234</x>
+      <x>243</x>
       <y>288</y>
       <w>90</w>
       <h>27</h>
@@ -186,7 +186,7 @@ layer=10
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>234</x>
+      <x>243</x>
       <y>324</y>
       <w>90</w>
       <h>27</h>

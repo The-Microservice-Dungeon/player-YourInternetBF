@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import thkoeln.dungeon.game.application.GameApplicationService;
 import thkoeln.dungeon.game.domain.Game;
-import thkoeln.dungeon.player.domain.GameParticipationRepository;
-import thkoeln.dungeon.player.domain.Player;
-import thkoeln.dungeon.player.domain.PlayerMode;
-import thkoeln.dungeon.player.domain.PlayerRepository;
+import thkoeln.dungeon.player.domain.*;
 import thkoeln.dungeon.restadapter.GameServiceRESTAdapter;
 import thkoeln.dungeon.restadapter.PlayerRegistryDto;
 import thkoeln.dungeon.restadapter.exceptions.RESTConnectionFailureException;
@@ -19,6 +16,7 @@ import thkoeln.dungeon.restadapter.exceptions.RESTRequestDeniedException;
 import thkoeln.dungeon.restadapter.exceptions.UnexpectedRESTException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -164,19 +162,38 @@ public class PlayerApplicationService {
                 logger.error("No bearer token for " + player + " also after another attempt - cannot register for game!");
                 return;
             }
-            boolean success = gameServiceRESTAdapter.registerPlayerForGame(game.getGameId(), player.getBearerToken());
-            if (success) {
-                player.participateInGame(game);
-                playerRepository.save(player);
-                logger.info("Player " + player + " successfully registered for game " + game);
+            UUID transactionId = gameServiceRESTAdapter.registerPlayerForGame( game.getGameId(), player.getBearerToken() );
+            if ( transactionId != null ) {
+                GameParticipation gameParticipation = new GameParticipation( player, game, transactionId );
+                gameParticipationRepository.save( gameParticipation );
+                logger.info("Player " + player + " successfully registered for game " + game +
+                        " with transactionId " + transactionId );
             }
         } catch (RESTConnectionFailureException | RESTRequestDeniedException e) {
             // shouldn't happen - cannot do more than logging and retrying later
             // todo - err msg wrong
-            logger.error( "Could register " + player + " for " + game +
+            logger.error( "Could not register " + player + " for " + game +
                     "\nOriginal Exception:\n" + e.getMessage() + "\n" + e.getStackTrace() );
         }
     }
 
+
+    /**
+     *
+     */
+    public void assignPlayerId( UUID registrationTransactionId, UUID playerId ) {
+        if ( registrationTransactionId == null )
+            throw new PlayerRegistryException( "registrationTransactionId cannot be null!" );
+        if ( playerId == null )  throw new PlayerRegistryException( "PlayerId cannot be null!" );
+        List<GameParticipation> foundParticipations =
+                gameParticipationRepository.findByRegistrationTransactionId( registrationTransactionId );
+        if ( foundParticipations.size() != 1 ) {
+            throw new PlayerRegistryException( "Found not 1 participation for playerId " + playerId
+                        + ", but " + foundParticipations.size() );
+        }
+        Player player = foundParticipations.get( 0 ).getPlayer();
+        player.setPlayerId( playerId );
+        playerRepository.save( player );
+    }
 
 }

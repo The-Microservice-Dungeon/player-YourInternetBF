@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import thkoeln.dungeon.DungeonPlayerConfiguration;
 import thkoeln.dungeon.game.domain.Game;
 import thkoeln.dungeon.game.domain.GameRepository;
+import thkoeln.dungeon.player.domain.GameParticipationRepository;
 import thkoeln.dungeon.player.domain.PlayerRepository;
 
 import java.util.UUID;
@@ -37,11 +38,15 @@ public class GameLifecycleTest {
     @Autowired
     private PlayerRepository playerRepository;
     @Autowired
+    private GameParticipationRepository gameParticipationRepository;
+    @Autowired
     private GameApplicationService gameApplicationService;
 
 
     @Before
     public void setUp() throws Exception {
+        gameParticipationRepository.deleteAll();
+        playerRepository.deleteAll();
         playerRepository.deleteAll();
         gameRepository.deleteAll();
         game0 = Game.newlyCreatedGame( GAME_ID_0 );
