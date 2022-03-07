@@ -1,5 +1,6 @@
 name: Build Docker Image
 on:
+  workflow_dispatch:
   push:
     # Path exclusions go here
     # **/filename for files
